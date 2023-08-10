@@ -1,0 +1,21 @@
+{
+  "name": "@imnd/dom-js-lib",
+  "version": "1.0.0",
+  "description": "JS library for working with DOM",
+  "main": "dom.js",
+  "scripts": {
+    "build": "webpack --mode=production"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/preset-env": "^7.20.2",
+    "babel-loader": "^9.1.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/imnd/dom-js-lib.git"
+  },
+  "author": "imnd",
+  "license": "ISC"
+}
