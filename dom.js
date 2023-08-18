@@ -16,11 +16,11 @@ const
 
   blur = (obj, func) => obj.addEventListener("blur", func),
 
-  find = (string, doc) => {
-    if (doc === undefined) {
-      doc = document;
+  find = (string, obj) => {
+    if (obj === undefined) {
+      obj = document;
     }
-    return doc.querySelector(string);
+    return obj.querySelector(string);
   },
 
   findLast = (string, doc) => {
@@ -231,7 +231,7 @@ const
       obj.selectedIndex = 0;
     } else if (obj.value !== undefined) {
       if (
-        objType === "text"
+           objType === "text"
         || objType === "password"
         || objType === "hidden"
         || objType === "textarea"
@@ -273,38 +273,36 @@ const
   }
 ;
 
-const dom = {
-  ready: ready,
-  click: click,
-  blur: blur,
-  find: find,
-  findLast: findLast,
-  findAll: findAll,
-  findObj: findObj,
-  findById: findById,
-  findByTag: findByTag,
-  findAllByTag: findAllByTag,
-  findByName: findByName,
-  findAllByName: findAllByName,
-  findByClass: findByClass,
-  findLastByClass: findLastByClass,
-  findAllByClass: findAllByClass,
-  create: create,
-  replace: replace,
-  html: html,
-  val: val,
-  attr: attr,
-  getAttr: getAttr,
-  setAttr: setAttr,
+export {
+  ready,
+  click,
+  blur,
+  find,
+  findLast,
+  findAll,
+  findObj,
+  findById,
+  findByTag,
+  findAllByTag,
+  findByName,
+  findAllByName,
+  findByClass,
+  findLastByClass,
+  findAllByClass,
+  create,
+  replace,
+  html,
+  val,
+  attr,
+  getAttr,
+  setAttr,
 
-  addClass: addClass,
-  removeClass: removeClass,
+  addClass,
+  removeClass,
 
-  clearForm: clearForm,
-  clear: clear,
-  hide: hide,
+  clearForm,
+  clear,
+  hide,
 
-  renderTemplate: renderTemplate
+  renderTemplate
 };
-
-export default dom;
