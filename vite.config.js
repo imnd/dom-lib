@@ -6,7 +6,8 @@ const config = defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'dom.js'),
       name: 'dom',
-      fileName: 'dom'
+      fileName: 'dom',
+      formats: ['es'],
     },
   }
 });

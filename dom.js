@@ -2,7 +2,6 @@
  * Набор методов для работы с DOM
  *
  * @constructor
- * @this {dom}
  */
 
 const

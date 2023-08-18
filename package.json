@@ -1,9 +1,8 @@
 {
   "name": "imnd-dom",
-  "type": "module",
   "description": "JS library for working with DOM",
-  "main": "../bookkeep-tachyon/assets/js/dom.js",
-  "version": "1.0.2",
+  "main": "dom.js",
+  "version": "1.0.3",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
