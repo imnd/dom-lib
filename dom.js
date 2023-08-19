@@ -4,304 +4,369 @@
  * @constructor
  */
 
-const
-  ready = a => {
-    const b = document,
-      c = "addEventListener";
-    b[c] ? b[c]("DOMContentLoaded", a) : window.attachEvent("onload", a)
-  },
+const dom = (function () {
+  let node = null;
+  let nodes = [];
 
-  click = (obj, func) => obj.addEventListener("click", func),
+  const wrapper = {};
 
-  blur = (obj, func) => obj.addEventListener("blur", func),
+  wrapper.get = () => {
+    return node;
+  };
 
-  find = (string, obj) => {
-    if (obj === undefined) {
-      obj = document;
+  wrapper.set = (val) => {
+    node = val;
+
+    return wrapper;
+  };
+
+  wrapper.getAll = () => {
+    return nodes;
+  }
+
+  wrapper.each = (callback) => {
+    for (let key = 0; key < nodes.length; key++) {
+      callback(nodes[key])
     }
-    return obj.querySelector(string);
-  },
+  }
 
-  findLast = (string, doc) => {
-    if (doc === undefined) {
-      doc = document;
+  wrapper.length = () => {
+    return node.length;
+  }
+
+  // events
+
+  wrapper.ready = handler => {
+    const method = 'addEventListener';
+    document[method] ? document[method]('DOMContentLoaded', handler) : window.attachEvent('onload', handler)
+  }
+
+  wrapper.click = callback => wrapper.setEventHandler('click', callback)
+
+  wrapper.blur = callback => wrapper.setEventHandler('blur', callback)
+
+  wrapper.change = callback => wrapper.setEventHandler('change', callback)
+
+  wrapper.setEventHandler = (event, callback) => node.addEventListener(event, callback)
+
+  // find
+
+  wrapper.find = (string, parent) => {
+    if (parent === undefined) {
+      parent = document;
     }
-    const elems = doc.querySelectorAll(string);
 
-    return elems[elems.length - 1];
-  },
+    node = parent.querySelector(string)
 
-  findAll = (string, doc) => {
-    if (doc === undefined) {
-      doc = document;
+    return wrapper;
+  }
+
+  wrapper.findLast = (string, parent) => {
+    if (parent === undefined) {
+      parent = document;
     }
-    return doc.querySelectorAll(string);
-  },
 
-  findById = (id, doc) => {
-    if (doc === undefined) {
-      doc = document;
+    const elems = parent.querySelectorAll(string);
+
+    node = elems[elems.length - 1];
+
+    return wrapper;
+  }
+
+  wrapper.findAll = (string, parent) => {
+    if (parent === undefined) {
+      parent = document;
     }
-    return doc.getElementById ? doc.getElementById(id) : doc.all ? doc.all[id][1] : doc.layers[id];
-  },
 
-  findByName = (name, doc) => {
-    if (doc === undefined) {
-      doc = document;
+    nodes = parent.querySelectorAll(string);
+
+    return wrapper;
+  }
+
+  wrapper.findById = (id, parent) => {
+    if (parent === undefined) {
+      parent = document;
     }
-    return doc.getElementsByName ? doc.getElementsByName(name)[0] : doc.all ? doc.all[name] : doc.layers[name];
-  },
 
-  findObj = (obj, doc) => typeof (obj) === "object" ? obj : findById(obj, doc) || findByName(obj, doc),
+    node = parent.getElementById ? parent.getElementById(id) : parent.all ? parent.all[id][1] : parent.layers[id];
 
-  findAllByTag = (name, doc) => {
-    if (doc === undefined) {
-      doc = document;
+    return wrapper;
+  }
+
+  wrapper.findByName = (name, parent) => {
+    if (parent === undefined) {
+      parent = document;
     }
-    if (doc.getElementsByTagName) {
-      return doc.getElementsByTagName(name);
-    }
-  },
+    node = parent.getElementsByName ? parent.getElementsByName(name)[0] : parent.all ? parent.all[name] : parent.layers[name];
 
-  findByTag = (name, doc) => findAllByTag(name, doc)[0],
+    return wrapper;
+  }
 
-  findAllByName = (name, doc) => {
-    if (doc === undefined) {
-      doc = document;
-    }
-    return doc.getElementsByName ? doc.getElementsByName(name) : doc.all ? doc.all[name] : doc.layers[name];
-  },
+  wrapper.findObj = (val, parent) => {
+    node = typeof (val) === 'object' ? val : wrapper.findById(val, parent) || wrapper.findByName(val, parent)
 
-  findAllByClass = (className, doc) => {
-    if (doc === undefined) {
-      doc = document;
-    }
-    if (doc.getElementsByClassName(className)) {
-      return doc.getElementsByClassName(className);
-    }
-  },
+    return wrapper;
+  }
 
-  findByClass = (className, doc) => {
-    const objs = findAllByClass(className, doc);
-    if (objs !== undefined) {
-      return objs[0];
+  wrapper.findAllByTag = (name, parent) => {
+    if (parent === undefined) {
+      parent = document;
     }
-  },
-
-  findLastByClass = (className, doc) => {
-    const objs = findAllByClass(className, doc);
-    if (objs !== undefined) {
-      return objs[objs.length - 1];
+    if (parent.getElementsByTagName) {
+      nodes = parent.getElementsByTagName(name);
     }
-  },
 
-  create = (string) => {
-    let div = document.createElement("div");
+    return wrapper;
+  }
+
+  wrapper.findByTag = (name, parent) => {
+    node = wrapper.findAllByTag(name, parent)[0]
+
+    return wrapper;
+  }
+
+  wrapper.findAllByName = (name, parent) => {
+    if (parent === undefined) {
+      parent = document;
+    }
+    node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
+
+    return wrapper;
+  }
+
+  wrapper.findAllByClass = (className, parent) => {
+    if (parent === undefined) {
+      parent = document;
+    }
+    if (parent.getElementsByClassName(className)) {
+      nodes = parent.getElementsByClassName(className);
+    }
+
+    return wrapper;
+  }
+
+  wrapper.findByClass = (className, parent) => {
+    wrapper.findAllByClass(className, parent);
+    if (nodes !== undefined) {
+      node = nodes[0];
+    }
+
+    return wrapper;
+  }
+
+  wrapper.findLastByClass = (className, parent) => {
+    wrapper.findAllByClass(className, parent);
+    if (nodes !== undefined) {
+      node = nodes[nodes.length - 1];
+    }
+
+    return wrapper;
+  }
+
+  wrapper.parent = () => {
+    return node.parentNode;
+  }
+
+  wrapper.child = (string) => {
+    wrapper.find(string, node);
+
+    return wrapper;
+  }
+
+  wrapper.children = (string) => {
+    wrapper.findAll(string, node);
+
+    return wrapper;
+  }
+
+  wrapper.create = (string) => {
+    let div = document.createElement('div');
     div.innerHTML = string.trim();
-    return div.firstChild;
-  },
 
-  replace = (object, string) => {
-    const newItem = create(string);
-    object.parentNode.replaceChild(newItem, object);
-  },
+    node = div.firstChild;
 
-  html = (object, html) => {
-    let obj = findObj(object);
-    if (obj === null || obj === undefined) {
-      return "";
+    return wrapper;
+  }
+
+  wrapper.replace = (string) => {
+    const newItem = wrapper.create(string);
+    node.parentNode.replaceChild(newItem, node);
+  }
+
+  wrapper.html = (html) => {
+    if (node === null || node === undefined) {
+      return '';
     }
     if (html === undefined) {
-      return obj.innerHTML
+      return node.innerHTML
     }
-    obj.innerHTML = html;
-  },
+    node.innerHTML = html;
 
-  val = (object, value) => {
-    let obj = findObj(object);
-    if (obj === null || obj === undefined) {
-      return "";
+    return wrapper;
+  }
+
+  wrapper.id = (id) => {
+    if (id === undefined) {
+      return node.id;
+    } else {
+      node.id = id;
+      return wrapper;
     }
-    const objType = obj.type;
-    if (objType === "checkbox") {
+  }
+
+  wrapper.class = (className) => {
+    if (className === undefined) {
+      return node.className;
+    } else {
+      node.className = className;
+      return wrapper;
+    }
+  }
+
+  wrapper.val = (value) => {
+    if (node === null || node === undefined) {
+      return '';
+    }
+    const objType = node.type;
+    if (objType === 'checkbox') {
       if (value === undefined) {
-        return obj.checked;
+        return node.checked;
       } else {
-        obj.checked = value;
+        node.checked = value;
+        return wrapper;
       }
-    } else if (
-      objType === "select-one"
-      || objType === "select-multiple"
-    ) {
+    } else if (objType === 'select-one' || objType === 'select-multiple') {
       if (value === undefined) {
-        return obj.options[obj.selectedIndex].value ? obj.options[obj.selectedIndex].value : obj.options[obj.selectedIndex].text;
+        return node.options[node.selectedIndex].value ? node.options[node.selectedIndex].value : node.options[node.selectedIndex].text;
       } else {
-        let options = obj.options;
+        let options = node.options;
         for (let key in options) {
           if (options[key].value === value) {
-            obj.selectedIndex = key;
+            node.selectedIndex = key;
           }
         }
       }
-    } else if (obj.value !== undefined) {
-      if (
-        objType === "text"
-        || objType === "password"
-        || objType === "hidden"
-        || objType === "select-one"
-      ) {
+    } else if (node.value !== undefined) {
+      if (objType === 'text' || objType === 'password' || objType === 'hidden' || objType === 'select-one') {
         if (value === undefined) {
-          return obj.value;
+          return node.value;
         } else {
-          obj.value = value;
+          node.value = value;
+          return wrapper;
         }
       }
-      if (
-        objType === "textarea"
-        || objType === "submit"
-      ) {
+      if (objType === 'textarea' || objType === 'submit') {
         if (value === undefined) {
-          return obj.innerHTML;
+          return node.innerHTML;
         } else {
-          obj.innerHTML = value;
+          node.innerHTML = value;
+          return wrapper;
         }
       }
-    } else if (obj.innerHTML !== undefined) {
+    } else if (node.innerHTML !== undefined) {
       if (value === undefined) {
-        return obj.innerHTML;
+        return node.innerHTML;
       } else {
-        obj.innerHTML = value;
+        node.innerHTML = value;
+        return wrapper;
       }
     }
-  },
+  }
 
-  getAttr = (obj, attr) => {
-    if (obj.getAttribute) {
-      return obj.getAttribute(attr);
+  wrapper.getAttr = (attr) => {
+    if (node.getAttribute) {
+      return node.getAttribute(attr);
     }
-  },
+  }
 
-  setAttr = (obj, attr, value) => {
-    if (obj.setAttribute) {
-      obj.setAttribute(attr, value);
+  wrapper.setAttr = (attr, value) => {
+    if (node.setAttribute) {
+      node.setAttribute(attr, value);
     }
-  },
+    return wrapper;
+  }
 
-  attr = (obj, attr, value) => {
-    obj = findObj(obj);
+  wrapper.attr = (attr, value) => {
     if (value === undefined) {
-      return getAttr(obj, attr);
+      return wrapper.getAttr(attr);
     } else {
-      setAttr(obj, attr, value);
+      wrapper.setAttr(attr, value);
     }
-  },
+  }
 
-  addClass = (obj, value) => {
-    let cls = getAttr(obj, "class");
-    setAttr(obj, "class", cls + " " + value)
-  },
+  wrapper.addClass = (value) => {
+    let cls = wrapper.getAttr('class');
+    wrapper.setAttr('class', cls + ' ' + value)
+  }
 
-  removeClass = (obj, value) => {
-    let cls = getAttr(obj, "class");
+  wrapper.removeClass = (value) => {
+    let cls = wrapper.getAttr('class');
     if (cls === '') {
       return;
     }
-    let clsArr = cls.split(" ");
+    let clsArr = cls.split(' ');
     for (let i in clsArr) {
       if (clsArr[i] === value) {
         clsArr.splice(i, 1);
       }
     }
-    setAttr(obj, "class", clsArr.join(" "))
-  },
+    wrapper.setAttr('class', clsArr.join(' '))
+  }
 
-  clear = object => {
-    let obj = findObj(object);
-    if (obj === undefined) {
+  wrapper.clear = object => {
+    wrapper.findObj(object);
+    if (node === undefined) {
       return;
     }
-    const objType = obj.type;
+    const objType = node.type;
     if (objType === undefined) {
       return;
     }
-    if (objType === "checkbox") {
-      obj.checked = "";
-    } else if (objType === "select-one" || objType === "select-multiple") {
-      obj.selectedIndex = 0;
-    } else if (obj.value !== undefined) {
-      if (
-           objType === "text"
-        || objType === "password"
-        || objType === "hidden"
-        || objType === "textarea"
-        || objType === "select-one"
-      ) {
-        obj.value = "";
+    if (objType === 'checkbox') {
+      node.checked = '';
+      return wrapper;
+    } else if (objType === 'select-one' || objType === 'select-multiple') {
+      node.selectedIndex = 0;
+      return wrapper;
+    } else if (node.value !== undefined) {
+      if (objType === 'text' || objType === 'password' || objType === 'hidden' || objType === 'textarea' || objType === 'select-one') {
+        node.value = '';
+        return wrapper;
       }
-    } else if (obj.innerHTML) {
-      obj.innerHTML = "";
+    } else if (node.innerHTML) {
+      node.innerHTML = '';
+      return wrapper;
     }
-  },
+  }
 
-  clearForm = () => {
-    const form = findObj(arguments[0]);
+  wrapper.clearForm = () => {
+    const form = wrapper.findObj(arguments[0]);
     const controls = form.childNodes;
     for (let i in controls) {
-      clear(controls[i]);
+      wrapper.clear(controls[i]);
     }
-  },
+  }
 
-  hide = objID => {
-    findById(objID).className = "hidden";
-  },
+  wrapper.hide = objID => {
+    wrapper.findById(objID);
+    node.className = 'hidden';
+  }
 
-  renderTemplate = (template, vars) => {
-    let openCurlPos = template.indexOf("{{"), closeCurlPos;
+  wrapper.renderTemplate = (template, vars) => {
+    let openCurlPos = template.indexOf('{{'), closeCurlPos;
     while (openCurlPos !== -1) {
-      closeCurlPos = template.indexOf("}}");
-      let
-        varName = template.substr(openCurlPos + 2, closeCurlPos - openCurlPos - 2).trim(),
+      closeCurlPos = template.indexOf('}}');
+      let varName = template.substr(openCurlPos + 2, closeCurlPos - openCurlPos - 2).trim(),
         prev = template.substr(0, openCurlPos),
-        post = template.substr(closeCurlPos + 2)
-      ;
+        post = template.substr(closeCurlPos + 2);
       template = template.substr(0, openCurlPos) + vars[varName] + template.substr(closeCurlPos + 2);
 
-      openCurlPos = template.indexOf("{{");
+      openCurlPos = template.indexOf('{{');
     }
     return template;
   }
-;
 
-export {
-  ready,
-  click,
-  blur,
-  find,
-  findLast,
-  findAll,
-  findObj,
-  findById,
-  findByTag,
-  findAllByTag,
-  findByName,
-  findAllByName,
-  findByClass,
-  findLastByClass,
-  findAllByClass,
-  create,
-  replace,
-  html,
-  val,
-  attr,
-  getAttr,
-  setAttr,
+  return wrapper;
+})();
 
-  addClass,
-  removeClass,
-
-  clearForm,
-  clear,
-  hide,
-
-  renderTemplate
-};
+export default dom;
