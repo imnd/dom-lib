@@ -4,20 +4,15 @@
  * @constructor
  */
 
-const dom = (function () {
-  let node = null;
+const dom = function (element) {
+  let node = element || null;
+
   let nodes = [];
 
   const wrapper = {};
 
   wrapper.get = () => {
     return node;
-  };
-
-  wrapper.set = (val) => {
-    node = val;
-
-    return wrapper;
   };
 
   wrapper.getAll = () => {
@@ -103,7 +98,7 @@ const dom = (function () {
   }
 
   wrapper.findObj = (val, parent) => {
-    node = typeof (val) === 'object' ? val : wrapper.findById(val, parent) || wrapper.findByName(val, parent)
+    node = typeof (val) === 'object' ? val : wrapper.findById(val, parent) || wrapper.findByName(val, parent) || wrapper.findByClass(val, parent)
 
     return wrapper;
   }
@@ -367,6 +362,6 @@ const dom = (function () {
   }
 
   return wrapper;
-})();
+};
 
 export default dom;
