@@ -1,7 +1,9 @@
 /**
- * Набор методов для работы с DOM
- *
+ * A set of methods for working with the DOM
  * @constructor
+ *
+ * @author Andrey Serdyuk imndsu@gmail.com
+ * @copyright (c) 2023 IMND
  */
 
 const dom = function (element) {
