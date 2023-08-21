@@ -1,9 +1,7 @@
 /**
  * A set of methods for working with the DOM
- * @constructor
  *
- * @author Andrey Serdyuk imndsu@gmail.com
- * @copyright (c) 2023 IMND
+ * @constructor
  */
 
 const dom = function (element) {
@@ -11,54 +9,54 @@ const dom = function (element) {
 
   let nodes = [];
 
-  const wrapper = {};
+  const dom = {};
 
-  wrapper.get = () => {
+  dom.get = () => {
     return node;
   };
 
-  wrapper.getAll = () => {
+  dom.getAll = () => {
     return nodes;
   }
 
-  wrapper.each = (callback) => {
+  dom.each = callback => {
     for (let key = 0; key < nodes.length; key++) {
       callback(nodes[key])
     }
   }
 
-  wrapper.length = () => {
+  dom.length = () => {
     return node.length;
   }
 
   // events
 
-  wrapper.ready = handler => {
+  dom.ready = handler => {
     const method = 'addEventListener';
     document[method] ? document[method]('DOMContentLoaded', handler) : window.attachEvent('onload', handler)
   }
 
-  wrapper.click = callback => wrapper.setEventHandler('click', callback)
+  dom.click = callback => dom.setEventHandler('click', callback)
 
-  wrapper.blur = callback => wrapper.setEventHandler('blur', callback)
+  dom.blur = callback => dom.setEventHandler('blur', callback)
 
-  wrapper.change = callback => wrapper.setEventHandler('change', callback)
+  dom.change = callback => dom.setEventHandler('change', callback)
 
-  wrapper.setEventHandler = (event, callback) => node.addEventListener(event, callback)
+  dom.setEventHandler = (eventName, callback) => node.addEventListener(eventName, callback)
 
   // find
 
-  wrapper.find = (string, parent) => {
+  dom.find = (string, parent) => {
     if (parent === undefined) {
       parent = document;
     }
 
     node = parent.querySelector(string)
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findLast = (string, parent) => {
+  dom.findLast = (string, parent) => {
     if (parent === undefined) {
       parent = document;
     }
@@ -67,45 +65,45 @@ const dom = function (element) {
 
     node = elems[elems.length - 1];
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findAll = (string, parent) => {
+  dom.findAll = (string, parent) => {
     if (parent === undefined) {
       parent = document;
     }
 
     nodes = parent.querySelectorAll(string);
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findById = (id, parent) => {
+  dom.findById = (id, parent) => {
     if (parent === undefined) {
       parent = document;
     }
 
     node = parent.getElementById ? parent.getElementById(id) : parent.all ? parent.all[id][1] : parent.layers[id];
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findByName = (name, parent) => {
+  dom.findByName = (name, parent) => {
     if (parent === undefined) {
       parent = document;
     }
     node = parent.getElementsByName ? parent.getElementsByName(name)[0] : parent.all ? parent.all[name] : parent.layers[name];
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findObj = (val, parent) => {
-    node = typeof (val) === 'object' ? val : wrapper.findById(val, parent) || wrapper.findByName(val, parent) || wrapper.findByClass(val, parent)
+  dom.findObj = (val, parent) => {
+    node = typeof (val) === 'object' ? val : dom.findById(val, parent) || dom.findByName(val, parent) || dom.findByClass(val, parent)
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findAllByTag = (name, parent) => {
+  dom.findAllByTag = (name, parent) => {
     if (parent === undefined) {
       parent = document;
     }
@@ -113,25 +111,25 @@ const dom = function (element) {
       nodes = parent.getElementsByTagName(name);
     }
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findByTag = (name, parent) => {
-    node = wrapper.findAllByTag(name, parent)[0]
+  dom.findByTag = (name, parent) => {
+    node = dom.findAllByTag(name, parent)[0]
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findAllByName = (name, parent) => {
+  dom.findAllByName = (name, parent) => {
     if (parent === undefined) {
       parent = document;
     }
     node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findAllByClass = (className, parent) => {
+  dom.findAllByClass = (className, parent) => {
     if (parent === undefined) {
       parent = document;
     }
@@ -139,58 +137,58 @@ const dom = function (element) {
       nodes = parent.getElementsByClassName(className);
     }
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findByClass = (className, parent) => {
-    wrapper.findAllByClass(className, parent);
+  dom.findByClass = (className, parent) => {
+    dom.findAllByClass(className, parent);
     if (nodes !== undefined) {
       node = nodes[0];
     }
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.findLastByClass = (className, parent) => {
-    wrapper.findAllByClass(className, parent);
+  dom.findLastByClass = (className, parent) => {
+    dom.findAllByClass(className, parent);
     if (nodes !== undefined) {
       node = nodes[nodes.length - 1];
     }
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.parent = () => {
+  dom.parent = () => {
     return node.parentNode;
   }
 
-  wrapper.child = (string) => {
-    wrapper.find(string, node);
+  dom.child = string => {
+    dom.find(string, node);
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.children = (string) => {
-    wrapper.findAll(string, node);
+  dom.children = string => {
+    dom.findAll(string, node);
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.create = (string) => {
+  dom.create = string => {
     let div = document.createElement('div');
     div.innerHTML = string.trim();
 
-    node = div.firstChild;
-
-    return wrapper;
+    return div.firstChild;
   }
 
-  wrapper.replace = (string) => {
-    const newItem = wrapper.create(string);
+  dom.replace = string => {
+    const newItem = dom.create(string);
     node.parentNode.replaceChild(newItem, node);
+
+    return dom;
   }
 
-  wrapper.html = (html) => {
+  dom.html = html => {
     if (node === null || node === undefined) {
       return '';
     }
@@ -199,28 +197,28 @@ const dom = function (element) {
     }
     node.innerHTML = html;
 
-    return wrapper;
+    return dom;
   }
 
-  wrapper.id = (id) => {
+  dom.id = id => {
     if (id === undefined) {
       return node.id;
     } else {
       node.id = id;
-      return wrapper;
+      return dom;
     }
   }
 
-  wrapper.class = (className) => {
+  dom.class = className => {
     if (className === undefined) {
       return node.className;
     } else {
       node.className = className;
-      return wrapper;
+      return dom;
     }
   }
 
-  wrapper.val = (value) => {
+  dom.val = value => {
     if (node === null || node === undefined) {
       return '';
     }
@@ -230,7 +228,7 @@ const dom = function (element) {
         return node.checked;
       } else {
         node.checked = value;
-        return wrapper;
+        return dom;
       }
     } else if (objType === 'select-one' || objType === 'select-multiple') {
       if (value === undefined) {
@@ -242,6 +240,7 @@ const dom = function (element) {
             node.selectedIndex = key;
           }
         }
+        return dom;
       }
     } else if (node.value !== undefined) {
       if (objType === 'text' || objType === 'password' || objType === 'hidden' || objType === 'select-one') {
@@ -249,7 +248,7 @@ const dom = function (element) {
           return node.value;
         } else {
           node.value = value;
-          return wrapper;
+          return dom;
         }
       }
       if (objType === 'textarea' || objType === 'submit') {
@@ -257,7 +256,7 @@ const dom = function (element) {
           return node.innerHTML;
         } else {
           node.innerHTML = value;
-          return wrapper;
+          return dom;
         }
       }
     } else if (node.innerHTML !== undefined) {
@@ -265,41 +264,43 @@ const dom = function (element) {
         return node.innerHTML;
       } else {
         node.innerHTML = value;
-        return wrapper;
+        return dom;
       }
     }
   }
 
-  wrapper.getAttr = (attr) => {
+  dom.getAttr = attrName => {
     if (node.getAttribute) {
-      return node.getAttribute(attr);
+      return node.getAttribute(attrName);
     }
   }
 
-  wrapper.setAttr = (attr, value) => {
+  dom.setAttr = (attrName, value) => {
     if (node.setAttribute) {
-      node.setAttribute(attr, value);
+      node.setAttribute(attrName, value);
     }
-    return wrapper;
+    return dom;
   }
 
-  wrapper.attr = (attr, value) => {
+  dom.attr = (attrName, value) => {
     if (value === undefined) {
-      return wrapper.getAttr(attr);
+      return dom.getAttr(attrName);
     } else {
-      wrapper.setAttr(attr, value);
+      dom.setAttr(attrName, value);
+      return dom;
     }
   }
 
-  wrapper.addClass = (value) => {
-    let cls = wrapper.getAttr('class');
-    wrapper.setAttr('class', cls + ' ' + value)
+  dom.addClass = value => {
+    let cls = dom.getAttr('class');
+    dom.setAttr('class', cls + ' ' + value)
+    return dom;
   }
 
-  wrapper.removeClass = (value) => {
-    let cls = wrapper.getAttr('class');
+  dom.removeClass = value => {
+    let cls = dom.getAttr('class');
     if (cls === '') {
-      return;
+      return dom;
     }
     let clsArr = cls.split(' ');
     for (let i in clsArr) {
@@ -307,49 +308,51 @@ const dom = function (element) {
         clsArr.splice(i, 1);
       }
     }
-    wrapper.setAttr('class', clsArr.join(' '))
+    dom.setAttr('class', clsArr.join(' '))
+    return dom;
   }
 
-  wrapper.clear = object => {
-    wrapper.findObj(object);
+  dom.clear = object => {
+    dom.findObj(object);
     if (node === undefined) {
-      return;
+      return dom;
     }
     const objType = node.type;
     if (objType === undefined) {
-      return;
+      return dom;
     }
     if (objType === 'checkbox') {
       node.checked = '';
-      return wrapper;
     } else if (objType === 'select-one' || objType === 'select-multiple') {
       node.selectedIndex = 0;
-      return wrapper;
     } else if (node.value !== undefined) {
       if (objType === 'text' || objType === 'password' || objType === 'hidden' || objType === 'textarea' || objType === 'select-one') {
         node.value = '';
-        return wrapper;
       }
     } else if (node.innerHTML) {
       node.innerHTML = '';
-      return wrapper;
     }
+
+    return dom;
   }
 
-  wrapper.clearForm = () => {
-    const form = wrapper.findObj(arguments[0]);
+  dom.clearForm = () => {
+    const form = dom.findObj(arguments[0]);
     const controls = form.childNodes;
     for (let i in controls) {
-      wrapper.clear(controls[i]);
+      dom.clear(controls[i]);
     }
+
+    return dom;
   }
 
-  wrapper.hide = objID => {
-    wrapper.findById(objID);
+  dom.hide = objID => {
+    dom.findById(objID);
     node.className = 'hidden';
+    return dom;
   }
 
-  wrapper.renderTemplate = (template, vars) => {
+  dom.renderTemplate = (template, vars) => {
     let openCurlPos = template.indexOf('{{'), closeCurlPos;
     while (openCurlPos !== -1) {
       closeCurlPos = template.indexOf('}}');
@@ -363,7 +366,7 @@ const dom = function (element) {
     return template;
   }
 
-  return wrapper;
+  return dom;
 };
 
 export default dom;
