@@ -5,11 +5,23 @@
  */
 
 const dom = function (element) {
-  let node = element || null;
-
+  let node;
   let nodes = [];
 
   const dom = {};
+
+  if (typeof element === 'string' || element instanceof String) {
+    node = dom.find(element);
+  } else {
+    node = element;
+  }
+
+  function getParent (parent) {
+    if (parent === undefined) {
+      parent = (node === undefined) ? document : node;
+    }
+    return parent;
+  }
 
   dom.get = () => {
     return node;
@@ -36,52 +48,53 @@ const dom = function (element) {
     document[method] ? document[method]('DOMContentLoaded', handler) : window.attachEvent('onload', handler)
   }
 
-  dom.click = callback => dom.setEventHandler('click', callback)
+  dom.click = callback => {
+    dom.setEventHandler('click', callback);
 
-  dom.blur = callback => dom.setEventHandler('blur', callback)
+    return dom;
+  }
 
-  dom.change = callback => dom.setEventHandler('change', callback)
+  dom.blur = callback => {
+    dom.setEventHandler('blur', callback);
 
-  dom.setEventHandler = (eventName, callback) => node.addEventListener(eventName, callback)
+    return dom;
+  }
+
+  dom.change = callback => {
+    dom.setEventHandler('change', callback);
+
+    return dom;
+  }
+
+  dom.setEventHandler = (eventName, callback) => {
+    node.addEventListener(eventName, callback);
+
+    return dom;
+  }
 
   // find
 
   dom.find = (string, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
-
-    node = parent.querySelector(string)
+    node = getParent(parent).querySelector(string)
 
     return dom;
   }
 
   dom.findLast = (string, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
-
-    const elems = parent.querySelectorAll(string);
-
+    const elems = getParent(parent).querySelectorAll(string);
     node = elems[elems.length - 1];
 
     return dom;
   }
 
   dom.findAll = (string, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
-
-    nodes = parent.querySelectorAll(string);
+    nodes = getParent(parent).querySelectorAll(string);
 
     return dom;
   }
 
   dom.findById = (id, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
+    parent = getParent(parent);
 
     node = parent.getElementById ? parent.getElementById(id) : parent.all ? parent.all[id][1] : parent.layers[id];
 
@@ -89,9 +102,8 @@ const dom = function (element) {
   }
 
   dom.findByName = (name, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
+    parent = getParent(parent);
+
     node = parent.getElementsByName ? parent.getElementsByName(name)[0] : parent.all ? parent.all[name] : parent.layers[name];
 
     return dom;
@@ -104,9 +116,8 @@ const dom = function (element) {
   }
 
   dom.findAllByTag = (name, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
+    parent = getParent(parent);
+
     if (parent.getElementsByTagName) {
       nodes = parent.getElementsByTagName(name);
     }
@@ -121,18 +132,15 @@ const dom = function (element) {
   }
 
   dom.findAllByName = (name, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
+    parent = getParent(parent);
+
     node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
 
     return dom;
   }
 
   dom.findAllByClass = (className, parent) => {
-    if (parent === undefined) {
-      parent = document;
-    }
+    parent = getParent(parent);
     if (parent.getElementsByClassName(className)) {
       nodes = parent.getElementsByClassName(className);
     }
@@ -189,13 +197,23 @@ const dom = function (element) {
   }
 
   dom.html = html => {
-    if (node === null || node === undefined) {
+    if (node === undefined) {
       return '';
     }
     if (html === undefined) {
       return node.innerHTML
     }
     node.innerHTML = html;
+
+    return dom;
+  }
+
+  dom.rawHtml = string => {
+    const
+      parser = new DOMParser(),
+      xmlDoc = parser.parseFromString(string, 'text/html');
+
+    dom.html(xmlDoc)
 
     return dom;
   }
@@ -219,7 +237,7 @@ const dom = function (element) {
   }
 
   dom.val = value => {
-    if (node === null || node === undefined) {
+    if (node === undefined) {
       return '';
     }
     const objType = node.type;
