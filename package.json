@@ -2,7 +2,7 @@
   "name": "imnd-dom",
   "description": "JS library for working with DOM",
   "main": "dom.js",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

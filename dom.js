@@ -4,17 +4,11 @@
  * @constructor
  */
 
-const dom = function (element) {
+const dom = function (argument) {
   let node;
   let nodes = [];
 
   const dom = {};
-
-  if (typeof element === 'string' || element instanceof String) {
-    node = dom.find(element);
-  } else {
-    node = element;
-  }
 
   function getParent (parent) {
     if (parent === undefined) {
@@ -23,22 +17,103 @@ const dom = function (element) {
     return parent;
   }
 
-  dom.get = () => {
-    return node;
-  };
+  function setNodes(_nodes) {
+    nodes = _nodes;
 
-  dom.getAll = () => {
-    return nodes;
-  }
-
-  dom.each = callback => {
-    for (let key = 0; key < nodes.length; key++) {
-      callback(nodes[key])
+    if (nodes) {
+      node = nodes[0]
     }
   }
 
-  dom.length = () => {
-    return node.length;
+  // find
+
+  dom.find = (string, parent) => {
+    node = getParent(parent).querySelector(string)
+
+    return dom;
+  }
+
+  dom.findLast = (string, parent) => {
+    const elems = getParent(parent).querySelectorAll(string);
+    node = elems[elems.length - 1];
+
+    return dom;
+  }
+
+  dom.findAll = (string, parent) => {
+    setNodes(getParent(parent).querySelectorAll(string));
+
+    return dom;
+  }
+
+  dom.findById = (id, parent) => {
+    parent = getParent(parent);
+
+    node = parent.getElementById ? parent.getElementById(id) : parent.all ? parent.all[id][1] : parent.layers[id];
+
+    return dom;
+  }
+
+  dom.findByName = (name, parent) => {
+    parent = getParent(parent);
+
+    node = parent.getElementsByName ? parent.getElementsByName(name)[0] : parent.all ? parent.all[name] : parent.layers[name];
+
+    return dom;
+  }
+
+  dom.findObj = (val, parent) => {
+    node = typeof (val) === 'object' ? val : dom.findById(val, parent) || dom.findByName(val, parent) || dom.findByClass(val, parent)
+
+    return dom;
+  }
+
+  dom.findAllByTag = (name, parent) => {
+    parent = getParent(parent);
+
+    if (parent.getElementsByTagName) {
+      setNodes(parent.getElementsByTagName(name));
+    }
+
+    return dom;
+  }
+
+  dom.findByTag = (name, parent) => {
+    node = dom.findAllByTag(name, parent)[0]
+
+    return dom;
+  }
+
+  dom.findAllByName = (name, parent) => {
+    parent = getParent(parent);
+
+    node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
+
+    return dom;
+  }
+
+  dom.findAllByClass = (className, parent) => {
+    parent = getParent(parent);
+    if (parent.getElementsByClassName(className)) {
+      setNodes(parent.getElementsByClassName(className));
+    }
+
+    return dom;
+  }
+
+  dom.findByClass = (className, parent) => {
+    dom.findAllByClass(className, parent);
+
+    return dom;
+  }
+
+  dom.findLastByClass = (className, parent) => {
+    dom.findAllByClass(className, parent);
+    if (nodes) {
+      node = nodes[nodes.length - 1];
+    }
+
+    return dom;
   }
 
   // events
@@ -72,99 +147,33 @@ const dom = function (element) {
     return dom;
   }
 
-  // find
-
-  dom.find = (string, parent) => {
-    node = getParent(parent).querySelector(string)
-
-    return dom;
+  if (typeof argument === 'string' || argument instanceof String) {
+    dom.findAll(argument);
+  } else if (typeof argument === 'function' || argument instanceof Function) {
+    dom.ready(argument);
+  } else {
+    node = argument;
   }
 
-  dom.findLast = (string, parent) => {
-    const elems = getParent(parent).querySelectorAll(string);
-    node = elems[elems.length - 1];
+  dom.get = () => {
+    return node;
+  };
 
-    return dom;
+  dom.getAll = () => {
+    return nodes;
   }
 
-  dom.findAll = (string, parent) => {
-    nodes = getParent(parent).querySelectorAll(string);
-
-    return dom;
-  }
-
-  dom.findById = (id, parent) => {
-    parent = getParent(parent);
-
-    node = parent.getElementById ? parent.getElementById(id) : parent.all ? parent.all[id][1] : parent.layers[id];
-
-    return dom;
-  }
-
-  dom.findByName = (name, parent) => {
-    parent = getParent(parent);
-
-    node = parent.getElementsByName ? parent.getElementsByName(name)[0] : parent.all ? parent.all[name] : parent.layers[name];
-
-    return dom;
-  }
-
-  dom.findObj = (val, parent) => {
-    node = typeof (val) === 'object' ? val : dom.findById(val, parent) || dom.findByName(val, parent) || dom.findByClass(val, parent)
-
-    return dom;
-  }
-
-  dom.findAllByTag = (name, parent) => {
-    parent = getParent(parent);
-
-    if (parent.getElementsByTagName) {
-      nodes = parent.getElementsByTagName(name);
+  dom.each = callback => {
+    for (let key = 0; key < nodes.length; key++) {
+      callback(nodes[key])
     }
-
-    return dom;
   }
 
-  dom.findByTag = (name, parent) => {
-    node = dom.findAllByTag(name, parent)[0]
-
-    return dom;
+  dom.length = () => {
+    return node.length;
   }
 
-  dom.findAllByName = (name, parent) => {
-    parent = getParent(parent);
-
-    node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
-
-    return dom;
-  }
-
-  dom.findAllByClass = (className, parent) => {
-    parent = getParent(parent);
-    if (parent.getElementsByClassName(className)) {
-      nodes = parent.getElementsByClassName(className);
-    }
-
-    return dom;
-  }
-
-  dom.findByClass = (className, parent) => {
-    dom.findAllByClass(className, parent);
-    if (nodes !== undefined) {
-      node = nodes[0];
-    }
-
-    return dom;
-  }
-
-  dom.findLastByClass = (className, parent) => {
-    dom.findAllByClass(className, parent);
-    if (nodes !== undefined) {
-      node = nodes[nodes.length - 1];
-    }
-
-    return dom;
-  }
+  //
 
   dom.parent = () => {
     return node.parentNode;
