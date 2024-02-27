@@ -27,21 +27,21 @@ const dom = function (argument) {
 
   // find
 
-  dom.find = (string, parent) => {
-    node = getParent(parent).querySelector(string)
+  dom.find = (selector, parent) => {
+    node = getParent(parent).querySelector(selector)
 
     return dom;
   }
 
-  dom.findLast = (string, parent) => {
-    const elems = getParent(parent).querySelectorAll(string);
+  dom.findLast = (selector, parent) => {
+    const elems = getParent(parent).querySelectorAll(selector);
     node = elems[elems.length - 1];
 
     return dom;
   }
 
-  dom.findAll = (string, parent) => {
-    setNodes(getParent(parent).querySelectorAll(string));
+  dom.findAll = (selector, parent) => {
+    setNodes(getParent(parent).querySelectorAll(selector));
 
     return dom;
   }
@@ -62,32 +62,32 @@ const dom = function (argument) {
     return dom;
   }
 
+  dom.findAllByName = (name, parent) => {
+    parent = getParent(parent);
+
+    node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
+
+    return dom;
+  }
+
   dom.findObj = (val, parent) => {
     node = typeof (val) === 'object' ? val : dom.findById(val, parent) || dom.findByName(val, parent) || dom.findByClass(val, parent)
 
     return dom;
   }
 
-  dom.findAllByTag = (name, parent) => {
+  dom.findAllByTag = (tagName, parent) => {
     parent = getParent(parent);
 
     if (parent.getElementsByTagName) {
-      setNodes(parent.getElementsByTagName(name));
+      setNodes(parent.getElementsByTagName(tagName));
     }
 
     return dom;
   }
 
-  dom.findByTag = (name, parent) => {
-    node = dom.findAllByTag(name, parent)[0]
-
-    return dom;
-  }
-
-  dom.findAllByName = (name, parent) => {
-    parent = getParent(parent);
-
-    node = parent.getElementsByName ? parent.getElementsByName(name) : parent.all ? parent.all[name] : parent.layers[name];
+  dom.findByTag = (tagName, parent) => {
+    node = dom.findAllByTag(tagName, parent)[0]
 
     return dom;
   }
@@ -123,26 +123,26 @@ const dom = function (argument) {
     document[method] ? document[method]('DOMContentLoaded', handler) : window.attachEvent('onload', handler)
   }
 
-  dom.click = callback => {
-    dom.setEventHandler('click', callback);
+  dom.click = handler => {
+    dom.setEventHandler('click', handler);
 
     return dom;
   }
 
-  dom.blur = callback => {
-    dom.setEventHandler('blur', callback);
+  dom.blur = handler => {
+    dom.setEventHandler('blur', handler);
 
     return dom;
   }
 
-  dom.change = callback => {
-    dom.setEventHandler('change', callback);
+  dom.change = handler => {
+    dom.setEventHandler('change', handler);
 
     return dom;
   }
 
-  dom.setEventHandler = (eventName, callback) => {
-    node.addEventListener(eventName, callback);
+  dom.setEventHandler = (eventName, handler) => {
+    node.addEventListener(eventName, handler);
 
     return dom;
   }
@@ -155,6 +155,8 @@ const dom = function (argument) {
     node = argument;
   }
 
+  // the rest methods
+
   dom.get = () => {
     return node;
   };
@@ -163,9 +165,9 @@ const dom = function (argument) {
     return nodes;
   }
 
-  dom.each = callback => {
+  dom.each = handler => {
     for (let key = 0; key < nodes.length; key++) {
-      callback(nodes[key])
+      handler(nodes[key])
     }
   }
 
@@ -177,27 +179,27 @@ const dom = function (argument) {
     return node.parentNode;
   }
 
-  dom.child = string => {
-    dom.find(string, node);
+  dom.child = selector => {
+    dom.find(selector, node);
 
     return dom;
   }
 
-  dom.children = string => {
-    dom.findAll(string, node);
+  dom.children = selector => {
+    dom.findAll(selector, node);
 
     return dom;
   }
 
-  dom.create = string => {
+  dom.create = selector => {
     let div = document.createElement('div');
-    div.innerHTML = string.trim();
+    div.innerHTML = selector.trim();
 
     return div.firstChild;
   }
 
-  dom.replace = string => {
-    const newItem = dom.create(string);
+  dom.replace = selector => {
+    const newItem = dom.create(selector);
     node.parentNode.replaceChild(newItem, node);
 
     return dom;
