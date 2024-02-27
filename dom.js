@@ -173,8 +173,6 @@ const dom = function (argument) {
     return node.length;
   }
 
-  //
-
   dom.parent = () => {
     return node.parentNode;
   }
@@ -217,16 +215,6 @@ const dom = function (argument) {
     return dom;
   }
 
-  dom.rawHtml = string => {
-    const
-      parser = new DOMParser(),
-      xmlDoc = parser.parseFromString(string, 'text/html');
-
-    dom.html(xmlDoc)
-
-    return dom;
-  }
-
   dom.id = id => {
     if (id === undefined) {
       return node.id;
@@ -243,6 +231,16 @@ const dom = function (argument) {
       node.className = className;
       return dom;
     }
+  }
+
+  dom.addClass = className => {
+    dom.class(`${dom.class()} ${className}`);
+    return dom;
+  }
+
+  dom.removeClass = className => {
+    dom.class(dom.class().replace(className, ''))
+    return dom;
   }
 
   dom.val = value => {
@@ -316,27 +314,6 @@ const dom = function (argument) {
       dom.setAttr(attrName, value);
       return dom;
     }
-  }
-
-  dom.addClass = value => {
-    let cls = dom.getAttr('class');
-    dom.setAttr('class', cls + ' ' + value)
-    return dom;
-  }
-
-  dom.removeClass = value => {
-    let cls = dom.getAttr('class');
-    if (cls === '') {
-      return dom;
-    }
-    let clsArr = cls.split(' ');
-    for (let i in clsArr) {
-      if (clsArr[i] === value) {
-        clsArr.splice(i, 1);
-      }
-    }
-    dom.setAttr('class', clsArr.join(' '))
-    return dom;
   }
 
   dom.clear = object => {
