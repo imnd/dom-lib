@@ -87,7 +87,7 @@ const dom = function (argument) {
   }
 
   dom.findByTag = (tagName, parent) => {
-    node = dom.findAllByTag(tagName, parent)[0]
+    node = dom.findAllByTag(tagName, parent)[0] ?? null
 
     return dom;
   }
@@ -191,11 +191,17 @@ const dom = function (argument) {
     return dom;
   }
 
-  dom.create = selector => {
-    let div = document.createElement('div');
-    div.innerHTML = selector.trim();
+  dom.create = html => {
+    let div = this.createTag('div', html);
 
     return div.firstChild;
+  }
+
+  dom.createTag = (tagName, html) => {
+    let tag = document.createElement(tagName);
+    tag.innerHTML = html.trim();
+
+    return tag;
   }
 
   dom.replace = selector => {
@@ -362,10 +368,8 @@ const dom = function (argument) {
     let openCurlPos = template.indexOf('{{'), closeCurlPos;
     while (openCurlPos !== -1) {
       closeCurlPos = template.indexOf('}}');
-      let varName = template.substr(openCurlPos + 2, closeCurlPos - openCurlPos - 2).trim(),
-        prev = template.substr(0, openCurlPos),
-        post = template.substr(closeCurlPos + 2);
-      template = template.substr(0, openCurlPos) + vars[varName] + template.substr(closeCurlPos + 2);
+      let varName = template.substring(openCurlPos + 2, closeCurlPos - openCurlPos - 2).trim();
+      template = template.substring(0, openCurlPos) + vars[varName] + template.substring(closeCurlPos + 2);
 
       openCurlPos = template.indexOf('{{');
     }
